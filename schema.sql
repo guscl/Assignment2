@@ -1,8 +1,8 @@
-- Comp9321 Assignment 2, Group 2
+-- Comp9321 Assignment 2, Group 2
 -- Database schema:
 
 -- possible issues, should auction and item be separate entities?
---                  if so should owner be in item table or auction table?
+-- if so should owner be in item table or auction table?
 
 CREATE TABLE member (
         username varChar(20) Primary Key,
@@ -12,7 +12,8 @@ CREATE TABLE member (
         email varChar(50) NOT NULL,
         birthyear integer,
         address varChar(100),
-        creditcard varChar(20)
+        creditcard varChar(20),
+        role varChar(14) NOT NULL
 );
 
 CREATE TABLE item (
@@ -48,14 +49,14 @@ CREATE TABLE bid (
 );
 
 -- start of data
-INSERT INTO member (username, nickname, email)
-        VALUES  ('Administrator', 'Admin', 'admin@domain.com');
+INSERT INTO member (username, nickname, email, role)
+        VALUES ('Administrator', 'Admin', 'admin@domain.com', 'administrator');
 
-INSERT INTO member (username, nickname, firstname, lastname, email, birthyear, address, creditcard)
-        VALUES ('user1', 'JohnD', 'John', 'Doe', 'johndoe@missingpersons.com', 1994, '1 Anzac Pde Kensington', 'XXXX-XXXX-XXXX-XXXX');
+INSERT INTO member (username, nickname, firstname, lastname, email, birthyear, address, creditcard, role)
+        VALUES ('user1', 'JohnD', 'John', 'Doe', 'johndoe@missingpersons.com', 1994, '1 Anzac Pde Kensington', 'XXXX-XXXX-XXXX-XXXX', 'member');
 
-INSERT INTO member (username, nickname, firstname, lastname, email, birthyear, address, creditcard)
-        VALUES ('user2', 'Jim', 'James', 'Jones', 'jjones@someuni.edu', 1996, '4 George Street Sydney', '1234-5678-0000-1111');
+INSERT INTO member (username, nickname, firstname, lastname, email, birthyear, address, creditcard, role)
+        VALUES ('user2', 'Jim', 'James', 'Jones', 'jjones@someuni.edu', 1996, '4 George Street Sydney', '1234-5678-0000-1111', 'member');
 
 INSERT INTO item (title, category, picture, description, postagedetails, reserveprice, bidincrement)
         VALUES ('Dell Laptop', 'Computers', 'dell.jpg', 'Scond hand laptop', 'Courier Delivery only', 150, 50);
@@ -77,4 +78,3 @@ INSERT INTO bid (biddate, bidtime, bidder, item, amount)
 
 INSERT INTO bid (biddate, bidtime, bidder, item, amount)
         VALUES (to_date('2013-10-14', 'YYYY-MM-DD'), '12:00', 'user1', 2, 320);
-                                                                                                                                                                                                                                                              79,1-8        Bot
