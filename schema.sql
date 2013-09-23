@@ -1,8 +1,7 @@
 -- Comp9321 Assignment 2, Group 2
 -- Database schema:
 
--- possible issues, should auction and item be separate entities?
--- if so should owner be in item table or auction table?
+-- Schema applies to Apache Derby Database
 
 CREATE TABLE member (
         username varChar(20) Primary Key,
@@ -17,7 +16,7 @@ CREATE TABLE member (
 );
 
 CREATE TABLE item (
-        itemid serial Primary Key,
+        itemid INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
         title varChar(30) NOT NULL,
         category varChar(15) NOT NULL, -- valid categories to be included in code
         picture varChar(20) NOT NULL, -- filename
@@ -25,7 +24,8 @@ CREATE TABLE item (
         postagedetails varChar(50) NOT NULL,
         reserveprice integer NOT NULL,
         bidincrement integer NOT NULL,
-        closingtime integer -- (optional) number hours after auction start
+        closingtime integer, -- (optional) number hours after auction start
+        PRIMARY KEY (itemid)
 );
 
 CREATE TABLE auction (
@@ -74,7 +74,7 @@ INSERT INTO auction(item, username, starttime)
         VALUES (2, 'user2', '14:00');
 
 INSERT INTO bid (biddate, bidtime, bidder, item, amount)
-        VALUES (to_date('2013-09-16', 'YYYY-MM-DD'), '14:00', 'user2', 1, 200);
+        VALUES (DATE('09/16/2013'), '14:00', 'user2', 1, 200);
 
 INSERT INTO bid (biddate, bidtime, bidder, item, amount)
-        VALUES (to_date('2013-10-14', 'YYYY-MM-DD'), '12:00', 'user1', 2, 320);
+        VALUES (DATE('10/14/2013'), '12:00', 'user1', 2, 320);
