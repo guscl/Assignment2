@@ -12,8 +12,6 @@ public class DbManager {
 	
 	/**
 	 * Constructor initialises Connection
-	 * version 0.1
-	 * Skeleton code for DbManager
 	 */
 	public DbManager () {
 		try {
@@ -40,11 +38,17 @@ public class DbManager {
 	 * @param passwd - Users Password
 	 * @return success or failure
 	 */
-	public boolean register(String uName, String passwd) {
-		String newUser = "INSERT INTO member" + 
-				"(username, nickname, firstname, lastname, email, birthyear, address, creditcard, role)" +
-				" VALUES ('" + uName + "', '" + passwd + "')";
-		insert(newUser); // fix db to include passwd
+	public boolean register(String uName, String passwd, String nName, String fName,
+			String lName, String email, int birthyear, String address, String creditCard,
+			String role) {
+		
+		String newUser = "INSERT INTO member " + 
+				"(username, password, nickname, firstname, lastname, email, birthyear, address, creditcard, role)" +
+				" VALUES ('" + uName + "', '" + passwd + "', '" + nName + "', '" + fName + "', '" + lName + 
+				"', '" + email + "', '" + birthyear + "', '" + address + "', '" + creditCard + "', '" + 
+				role + "')";
+		
+		insert(newUser);
 		return true;
 	}
 	
@@ -55,10 +59,11 @@ public class DbManager {
 	 * @return true if credentials found else false
 	 */
 	public boolean authenticate(String uName, String passwd) {
-		String credentials = "SELECT userName, passwd FROM member WHERE " +
-				uName + "=username";
+		String credentials = "SELECT * FROM member WHERE username = " +
+				uName + " AND username = " + passwd;
 		query(credentials);
 		return true;
+		
 	}
 	
 	/**
@@ -79,9 +84,18 @@ public class DbManager {
 	public boolean addAuction(int itemid, String title, String category, 
 	        String picture, String description, String postagedetails, int reserveprice, 
 	        int bidincrement, int closingtime, String username, String startTime) { // check how to represent time
-		String item;
-		String auction;
 		
+		String item = "INSERT INTO item (itemid, title, category, picture, description, " + 
+				"postagedetails, reserveprice, bidincrement, closingtime) VALUES (" + itemid + 
+				"', '" + title + "', '" + category + "', '" + picture + "', '" + description + "', '" + 
+				postagedetails + "', '" + reserveprice + "', '" + bidincrement + "', '" + 
+				closingtime + "', '" + username + "', '" + startTime + ")";
+		
+		String auction = "INSERT INTO auction (int item, String username, time starttime)" +
+				" VALUES (" + itemid + "', '" + username + "', '" + startTime + ")";
+		
+		insert(item);
+		insert(auction);
 		return true;
 	}
 	
@@ -90,8 +104,12 @@ public class DbManager {
 	 * @param s - String containing bid details
 	 * @return true if bid successfully written to database
 	 */
-	public boolean submitBid(String s) {
+	public boolean submitBid(Date biddate, Time bidtime, String bidder, int item, int amount) {
+		// may need to include checks bid is value or not duplicate
+		String bid = "INSERT INTO bid (biddate, bidtime, bidder, item, amount) VALUES (" + biddate +
+				"', '" + bidtime + "', '" + bidder + "', '" + item + "', '" + amount + ")";
 		
+		insert(bid);
 		return true;
 	}
 	
@@ -102,6 +120,13 @@ public class DbManager {
 	 */
 	public boolean insert(String s) {
 		// execute insert
+		try {
+			PreparedStatement statement = connection.prepareStatement(s);
+			statement.executeUpdate();
+		}
+		catch (SQLException e) {
+			System.out.println("An error occured when updating the Database");
+		}
 		return true;
 	}
 	
@@ -110,9 +135,17 @@ public class DbManager {
 	 * @param s - Query string
 	 * @return true if successful else false
 	 */
-	public String query(String s) {
-		// execute query
-		return "";
+	public ResultSet query(String s) {
+		ResultSet resultSet = null;
+		
+		try {
+			PreparedStatement statement = connection.prepareStatement(s);
+			resultSet = statement.executeQuery();
+		}
+		catch (SQLException e) {
+			System.out.println("An error occured when querying the Database");
+		}
+		return resultSet;
 	}
 	
 	public void close() {
