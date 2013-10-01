@@ -1,12 +1,9 @@
-package edu.unsw.comp9321;
-
-/**
- * Group 2 Assignment 2 - Auction Web App
- */
+package edu.unsw.comp9321.assign2;
 
 import java.io.IOException;
-import javax.servlet.ServletException;
+
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,17 +11,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.sql.*;
 
 /**
- * Servlet Controller v0.1
- * Checks request for action and redirects page
+ * Servlet implementation class ControlServlet
  */
-@WebServlet("/Controller")
-public class Controller extends HttpServlet {
+@WebServlet("/ControlServlet")
+public class ControlServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Controller() {
+    public ControlServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -43,29 +39,36 @@ public class Controller extends HttpServlet {
 		// TODO Auto-generated method stub
 		System.out.println("doPost called");
 		
-		// check for action requested
-		if (request.getParameter("action").equals("login")) {
-			System.out.println();
-			ConnectionManager m = new ConnectionManager(); // consider making static
-			Connection c = m.getConnection();
-			Authenticator a = new Authenticator(c);
-			a.login(request, response);
+		if (request.getParameter("action").equals("login")) { 
+			System.out.println("Perform login");
+			String user = request.getParameter("username");
+			String password = request.getParameter("password");
+			System.out.println("username: " + user + " password: " + password);
 			
-		}
-		else if (request.getParameter("action").equals("addUser")) {
-			System.out.println("Registering user into Database");
-			// call method to do insert method
-			Registration register = new Registration();
-			/*RequestDispatcher rd = request.getRequestDispatcher("Registration.jsp"); 
-			rd.forward(request, response);*/
-		}
-		else if (request.getParameter("action").equalsIgnoreCase("addAuction")) {
-			
-		}
-		else if (request.getParameter("action").equalsIgnoreCase("SubmitBid")) {
-			
+			ConnectionManager cm = new ConnectionManager();
+			Connection c = cm.getConnection();
+			try {
+				PreparedStatement login = c.prepareStatement("select * " +
+															 "from member " +
+															 "where username=? and password=?");
+				login.setString(1, user);
+				login.setString(2, password);
+				ResultSet result = login.executeQuery();
+				if (result.next()) {
+					RequestDispatcher rd = request.getRequestDispatcher("Main.jsp");
+					rd.forward(request, response);
+				}
+				else {
+					RequestDispatcher rd = request.getRequestDispatcher("LoginFailed.jsp");
+					rd.forward(request, response);
+				}
+			}
+			catch (SQLException e) {
+				System.out.println("An error occured");
+				e.printStackTrace();
+			}
 		}
 		
 	}
-
+	
 }
