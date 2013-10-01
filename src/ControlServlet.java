@@ -45,28 +45,11 @@ public class ControlServlet extends HttpServlet {
 			String password = request.getParameter("password");
 			System.out.println("username: " + user + " password: " + password);
 			
-			ConnectionManager cm = new ConnectionManager();
-			Connection c = cm.getConnection();
-			try {
-				PreparedStatement login = c.prepareStatement("select * " +
-															 "from member " +
-															 "where username=? and password=?");
-				login.setString(1, user);
-				login.setString(2, password);
-				ResultSet result = login.executeQuery();
-				if (result.next()) {
-					RequestDispatcher rd = request.getRequestDispatcher("Main.jsp");
-					rd.forward(request, response);
-				}
-				else {
-					RequestDispatcher rd = request.getRequestDispatcher("LoginFailed.jsp");
-					rd.forward(request, response);
-				}
-			}
-			catch (SQLException e) {
-				System.out.println("An error occured");
-				e.printStackTrace();
-			}
+			
+			authenticator a = new authenticator();
+			a.login(user, password, request, response);
+			
+			
 		}
 		
 	}
