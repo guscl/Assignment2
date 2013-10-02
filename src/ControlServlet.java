@@ -49,9 +49,20 @@ public class ControlServlet extends HttpServlet {
 			authenticator a = new authenticator();
 			a.login(user, password, request, response);
 			
+		}
+		else if (request.getParameter("action").equals("register")) {
+			Registration r = new Registration();
+			r.register(request, response);
+		}
+		else if (request.getParameter("action").equals("addAuction")) {
 			
 		}
-		
+		else if (request.getParameter("action").equals("bid")) {
+			
+		}
+		else if (request.getParameter("action").equals("adminLogin")) {
+			
+		}
 	}
 	
 }
