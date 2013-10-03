@@ -26,8 +26,8 @@ public class Registration {
 		updateString = "INSERT INTO member " +
 							"(username, nickname, firstname," +
 							" lastname, password, email, birthyear, " + 
-							"address, creditcard, role)" +
-						"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'member')";
+							"address, creditcard, role, locked)" +
+						"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'member', false)";
 		// prepare statement
 		try {
 			register = c.prepareStatement(updateString);
