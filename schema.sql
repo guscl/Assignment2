@@ -1,5 +1,5 @@
 -- Comp9321 Assignment 2, Group 2
--- Database schema: (Derby)
+-- Database schema:
 
 CREATE TABLE member (
         username varChar(20) Primary Key,
@@ -11,7 +11,8 @@ CREATE TABLE member (
         birthyear integer,
         address varChar(100),
         creditcard varChar(20),
-        role varChar(14) NOT NULL
+        role varChar(14) NOT NULL,
+        locked boolean NOT NULL
 );
 
 CREATE TABLE item (
@@ -31,6 +32,7 @@ CREATE TABLE auction (
         username varChar(20) NOT NULL,
         starttime time,
         auctionlength integer,
+        status varchar(7) NOT NULL,
         PRIMARY KEY (item, username),
         FOREIGN KEY (item) REFERENCES item(itemid),
         FOREIGN KEY (username) REFERENCES member(username)
@@ -48,14 +50,14 @@ CREATE TABLE bid (
 );
 
 -- start of data
-INSERT INTO member (username, nickname, password, email, role)
-        VALUES ('Administrator', 'Admin', 'admin123', 'admin@domain.com', 'administrator');
+INSERT INTO member (username, nickname, password, email, role, locked)
+        VALUES ('Administrator', 'Admin', 'admin123', 'admin@domain.com', 'administrator', false);
 
-INSERT INTO member (username, nickname, firstname, lastname, password, email, birthyear, address, creditcard, role)
-        VALUES ('user1', 'JohnD', 'John', 'Doe', 'abc123', 'johndoe@missingpersons.com', 1994, '1 Anzac Pde Kensington', 'XXXX-XXXX-XXXX-XXXX', 'member');
+INSERT INTO member (username, nickname, firstname, lastname, password, email, birthyear, address, creditcard, role, locked)
+        VALUES ('user1', 'JohnD', 'John', 'Doe', 'abc123', 'johndoe@missingpersons.com', 1994, '1 Anzac Pde Kensington', 'XXXX-XXXX-XXXX-XXXX', 'member', false);
 
-INSERT INTO member (username, nickname, firstname, lastname, password, email, birthyear, address, creditcard, role)
-        VALUES ('user2', 'Jim', 'James', 'Jones', 'xyz246', 'jjones@someuni.edu', 1996, '4 George Street Sydney', '1234-5678-0000-1111', 'member');
+INSERT INTO member (username, nickname, firstname, lastname, password, email, birthyear, address, creditcard, role, locked)
+        VALUES ('user2', 'Jim', 'James', 'Jones', 'xyz246', 'jjones@someuni.edu', 1996, '4 George Street Sydney', '1234-5678-0000-1111', 'member', false);
 
 INSERT INTO item (title, category, picture, description, postagedetails, reserveprice, bidincrement)
         VALUES ('Dell Laptop', 'Computers', 'dell.jpg', 'Scond hand laptop', 'Courier Delivery only', 150, 50);
@@ -66,11 +68,11 @@ INSERT INTO item (title, category, picture, description, postagedetails, reserve
 INSERT INTO item (title, category, picture, description, postagedetails, reserveprice, bidincrement)
         VALUES ('Textbook: Computer Networks', 'Book', 'image.jpg', 'used textbook as new', 'via post', 50, 10);
 
-INSERT INTO auction (item, username, starttime)
-        VALUES (1, 'user1', '16:00');
+INSERT INTO auction (item, username, starttime, status)
+        VALUES (1, 'user1', '16:00', 'new');
 
-INSERT INTO auction(item, username, starttime)
-        VALUES (2, 'user2', '14:00');
+INSERT INTO auction(item, username, starttime, status)
+        VALUES (2, 'user2', '14:00', 'started');
 
 INSERT INTO bid (biddate, bidtime, bidder, item, amount)
         VALUES (DATE('09/16/2013'), '14:00', 'user2', 1, 200);
