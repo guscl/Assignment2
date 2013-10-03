@@ -15,8 +15,12 @@ CREATE TABLE member (
         locked boolean NOT NULL
 );
 
-CREATE TABLE item (
-        itemid INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+CREATE TABLE auction (
+		id	integer NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+        username varChar(20) NOT NULL,
+        starttime time,
+        auctionlength integer,
+        status varchar(7) NOT NULL,
         title varChar(30) UNIQUE,
         category varChar(15) NOT NULL, -- valid categories to be included in code
         picture varChar(20) NOT NULL, -- filename
@@ -24,29 +28,18 @@ CREATE TABLE item (
         postagedetails varChar(50) NOT NULL,
         reserveprice integer NOT NULL,
         bidincrement integer NOT NULL,
-        PRIMARY KEY (itemid)
-);
-
-CREATE TABLE auction (
-        item integer NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
-        username varChar(20) NOT NULL,
-        starttime time,
-        auctionlength integer,
-        status varchar(7) NOT NULL,
-        PRIMARY KEY (item, username),
-        FOREIGN KEY (item) REFERENCES item(itemid),
-        FOREIGN KEY (username) REFERENCES member(username)
+        PRIMARY KEY (id)
 );
 
 CREATE TABLE bid (
         biddate date NOT NULL,
         bidtime time NOT NULL, -- use time instead of date given short auction time
         bidder varchar(20) NOT NULL,
-        item integer NOT NULL,
+        auctionid integer NOT NULL,
         amount integer NOT NULL, -- assume big in whole dollars
-        PRIMARY KEY (biddate, bidtime, bidder, item),
+        PRIMARY KEY (biddate, bidtime, bidder, auctionid),
         FOREIGN KEY (bidder) REFERENCES member(username),
-        FOREIGN KEY (item) REFERENCES item(itemid)
+        FOREIGN KEY (auctionid) REFERENCES auction(id)
 );
 
 -- start of data
@@ -59,23 +52,11 @@ INSERT INTO member (username, nickname, firstname, lastname, password, email, bi
 INSERT INTO member (username, nickname, firstname, lastname, password, email, birthyear, address, creditcard, role, locked)
         VALUES ('user2', 'Jim', 'James', 'Jones', 'xyz246', 'jjones@someuni.edu', 1996, '4 George Street Sydney', '1234-5678-0000-1111', 'member', false);
 
-INSERT INTO item (title, category, picture, description, postagedetails, reserveprice, bidincrement)
-        VALUES ('Dell Laptop', 'Computers', 'dell.jpg', 'Scond hand laptop', 'Courier Delivery only', 150, 50);
+INSERT INTO auction (username, starttime, auctionlength, status, title, category, picture, description, postagedetails, reserveprice, bidincrement)
+		VALUES ('user2', '14:00', 160, 'new', 'DELL Laptop', 'Computer', 'image.jpg', 'Second hand laptop', 'Australia Post', 100, 50);
 
-INSERT INTO item (title, category, picture, description, postagedetails, reserveprice, bidincrement)
-        VALUES ('Samsung Galaxy', 'Phone', 'mobile', 'Android mobile phone', 'AustraliaPost', 300, 20);
-
-INSERT INTO item (title, category, picture, description, postagedetails, reserveprice, bidincrement)
-        VALUES ('Textbook: Computer Networks', 'Book', 'image.jpg', 'used textbook as new', 'via post', 50, 10);
-
-INSERT INTO auction (username, starttime, status) -- auction length ommited
-        VALUES ('user1', '16:00', 'new');
-
-INSERT INTO auction(username, starttime, status) -- auction length ommited
-        VALUES ('user2', '14:00', 'started');
-
-INSERT INTO bid (biddate, bidtime, bidder, item, amount)
-        VALUES (DATE('09/16/2013'), '14:00', 'user2', 1, 200);
-
-INSERT INTO bid (biddate, bidtime, bidder, item, amount)
-        VALUES (DATE('10/14/2013'), '12:00', 'user1', 2, 320);
+INSERT INTO auction (username, starttime, auctionlength, status, title, category, picture, description, postagedetails, reserveprice, bidincrement)
+		VALUES ('user2', '14:00', 180, 'started', 'Computer Networks', 'Book', 'image2.jpg', 'Textbook for computer network applications', 'Australia Post', 50, 5);
+		
+INSERT INTO bid (biddate, bidtime, bidder, auctionid, amount)
+		VALUES (DATE('10/14/2013'), '12:00', 'user1', 2, 55);
