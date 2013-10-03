@@ -23,9 +23,9 @@ public class AuctionBuilder {
 						"postagedetails, reserveprice, bidincrement)" +
 						"VALUES (?, ?, 'photo.jpg', ?, ?, ?, ?)"; 
 		auctionString = "INSERT INTO auction " +
-						"(item, username, starttime)" +
+						"(item, username, auctionlength)" +
 						"VALUES (?, ?, ?)";
-		itemQueryString = "SELECT * FROM item WHERE title=? AND reserveprice=?";
+		itemQueryString = "SELECT * FROM item WHERE title=?";
 		
 		// prepare statement
 		try {
@@ -47,14 +47,10 @@ public class AuctionBuilder {
 	public void createAuction(HttpServletRequest request, HttpServletResponse response) {
 		/*This version does not yet allow for pictures to be added*/
 		boolean itemResult;
-		//boolean auctionResult;
 		
 		itemResult = addToItem(request);
 		if (itemResult) {
 			addToAuction(request, response);
-		}
-		else {
-			// item failed
 		}
 		
 	}
@@ -73,14 +69,15 @@ public class AuctionBuilder {
 	 */
 	private boolean addToItem(HttpServletRequest request) {
 		boolean result = true;
-		//register.setString(1, request.getParameter("username"));
 		try {
 			insertItem.setString(1, request.getParameter("title"));
 			insertItem.setString(2, request.getParameter("category"));
-			insertItem.setString(4, request.getParameter("description"));
-			insertItem.setString(5, request.getParameter("postage"));
+			// photo
+			insertItem.setString(3, request.getParameter("description"));
+			insertItem.setString(4, request.getParameter("postage"));
+			insertItem.setString(5, request.getParameter("reserve"));
 			insertItem.setString(6, request.getParameter("bidincrement"));
-			//insertItem.setString(7, request.getParameter("length"));
+			
 		}
 		catch (Exception e) {
 			System.out.println("Error preparing item");
@@ -111,36 +108,71 @@ public class AuctionBuilder {
 	private void addToAuction(HttpServletRequest request, HttpServletResponse response) {
 		int itemid;
 		String user = "user1"; // for user1 is adding the auction
-		//boolean result = true;
 		ResultSet results;
 		
 		// get itemid
+		itemid = getItemID(request.getParameter("title"));
+		
+		System.out.println("Have item id, now adding the auction");
 		try {
-			item.setString(1, request.getParameter("title"));
-			item.setString(2, request.getParameter("reserve"));
-			results = item.executeQuery();
-			if (results.next()) {
-				itemid = results.getInt("itemid");
-				auction.setInt(1, itemid);
-				auction.setString(1, user);
-				
-				int rowsUpdated = auction.executeUpdate();
-				if (rowsUpdated > 0) {
-					// update successful
-					System.out.println("Auction successfully added");
-					RequestDispatcher rd = request.getRequestDispatcher("Success.jsp");
-					rd.forward(request, response);
-					return;
-				}
+			auction.setInt(1, itemid);
+			auction.setString(2, user);
+			auction.setInt(3, Integer.parseInt(request.getParameter("length")));
+			
+			int updateCount = auction.executeUpdate();
+			if (updateCount > 0) {
+				System.out.println("Auction successfully added");
+				// implement email function here
+				RequestDispatcher rd = request.getRequestDispatcher("Success.jsp");
+				rd.forward(request, response);
+				return;
 			}
-			// dispatch to error page
-			System.out.println("Auction failed");
-			RequestDispatcher rd = request.getRequestDispatcher("AuctionFailed.jsp");
-			rd.forward(request, response);
+			
+			// Default redirect to indicate failure
+			redirectFailedAttempt(request, response);
 		}
 		catch (Exception e) {
-			System.out.println("Error occured cross checking item");
+			System.out.print("Error submitting Auction");
+			e.printStackTrace();
+			redirectFailedAttempt(request, response);
+		}
+			
+	}
+	
+	private Integer getItemID(String title) {
+		int itemNum = 0;
+		ResultSet rs;
+		
+		System.out.println("getItemId called");
+		
+		try {
+			item.setString(1,"iphone 5"); // title
+			rs = item.executeQuery();
+			if (rs.next()) {
+				System.out.println("have resultset");
+				itemNum = rs.getInt(1);
+				String titleName = rs.getString(2);
+				System.out.println("itemID: " + itemNum + " title: " + titleName);
+			}
+			else {
+				System.out.println("No set returned"); // will return 0
+			}
+		}
+		catch (Exception e) {
+			System.out.println("Failed to obtain item id");
+			e.printStackTrace();
 		}
 		
+		return itemNum;
+	}
+	
+	private void redirectFailedAttempt(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			RequestDispatcher rdFailed = request.getRequestDispatcher("AuctionFailed.jsp");
+			rdFailed.forward(request, response);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
