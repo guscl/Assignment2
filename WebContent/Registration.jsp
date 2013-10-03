@@ -21,11 +21,11 @@
 			</tr>
 			<tr>	
 				<td>First Name</td>
-				<td><input type="text" name="firstName" maxlength="50" /></td>
+				<td><input type="text" name="firstname" maxlength="50" /></td>
 			</tr>
 			<tr>	
 				<td>Last Name</td>
-				<td><input type="text" name="lastName" maxlength="50" /></td>
+				<td><input type="text" name="lastname" maxlength="50" /></td>
 			</tr>
 			<tr>	
 				<td>Email</td>
@@ -33,15 +33,15 @@
 			</tr>
 			<tr>	
 				<td>Year of Birth</td>
-				<td><input type="text" name="birthYear" maxlength="4" /></td>
+				<td><input type="text" name="birthyear" maxlength="4" /></td>
 			</tr>
 			<tr>	
 				<td>Full Address</td>
-				<td><input type="text" name="fullAddress" maxlength="100" /></td>
+				<td><input type="text" name="address" maxlength="100" /></td>
 			</tr>
 			<tr>	
 				<td>Credit Card Number</td>
-				<td><input type="text" name="creditCardNumber" maxlength="16" /></td>
+				<td><input type="text" name="creditcard" maxlength="16" /></td>
 			</tr>
 
 			<tr>
