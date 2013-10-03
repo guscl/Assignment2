@@ -28,7 +28,7 @@ CREATE TABLE item (
 );
 
 CREATE TABLE auction (
-        item integer NOT NULL,
+        item integer NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
         username varChar(20) NOT NULL,
         starttime time,
         auctionlength integer,
@@ -68,11 +68,11 @@ INSERT INTO item (title, category, picture, description, postagedetails, reserve
 INSERT INTO item (title, category, picture, description, postagedetails, reserveprice, bidincrement)
         VALUES ('Textbook: Computer Networks', 'Book', 'image.jpg', 'used textbook as new', 'via post', 50, 10);
 
-INSERT INTO auction (item, username, starttime, status)
-        VALUES (1, 'user1', '16:00', 'new');
+INSERT INTO auction (username, starttime, status) -- auction length ommited
+        VALUES ('user1', '16:00', 'new');
 
-INSERT INTO auction(item, username, starttime, status)
-        VALUES (2, 'user2', '14:00', 'started');
+INSERT INTO auction(username, starttime, status) -- auction length ommited
+        VALUES ('user2', '14:00', 'started');
 
 INSERT INTO bid (biddate, bidtime, bidder, item, amount)
         VALUES (DATE('09/16/2013'), '14:00', 'user2', 1, 200);
