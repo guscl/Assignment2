@@ -41,16 +41,13 @@ public class ControlServlet extends HttpServlet {
 		
 		if (request.getParameter("action").equals("login")) { 
 			System.out.println("Perform login");
-			String user = request.getParameter("username");
-			String password = request.getParameter("password");
-			System.out.println("username: " + user + " password: " + password);
-			
 			
 			authenticator a = new authenticator();
-			a.login(user, password, request, response);
+			a.login(request, response);
 			
 		}
 		else if (request.getParameter("action").equals("register")) {
+			// do login stuff here
 			Registration r = new Registration();
 			r.register(request, response);
 		}
@@ -59,11 +56,20 @@ public class ControlServlet extends HttpServlet {
 			ab.createAuction(request, response);
 		}
 		else if (request.getParameter("action").equals("bid")) {
-			
+			//Bid bid = new Bid();
+			//bid.submitBid(request, response);
 		}
-		else if (request.getParameter("action").equals("adminLogin")) {
-			
+		else if (request.getParameter("action").equals("logout")) {
+			System.out.println("Logging out redirect to index");
+			request.setAttribute("SessionTracker", null);
+			RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
+			rd.forward(request, response);
 		}
+		else if (request.getParameter("action").equals("admin")) {
+			Admin admin = new Admin();
+			admin.adminFunction(request, response);
+		}
+		
 	}
 	
 }
